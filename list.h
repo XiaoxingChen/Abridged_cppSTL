@@ -1,18 +1,15 @@
-//chenxx 2015/10/18 v1.0
+/**
+******************************************************************************
+* @file    list.h
+* @author  Chenxx
+* @version V1.1
+* @date    2015-10-18
+* @brief   This file defines the doubly-linked list class which is an abridged 
+*					 version of cpp standard library.
+******************************************************************************/
 #ifndef LIST_H
 #define LIST_H
-//#define RUN_IN_ARM
-#ifndef RUN_IN_ARM
-typedef unsigned char			u8;
-typedef signed char				s8;
-typedef unsigned short		u16;
-typedef signed short			s16;
-typedef unsigned int			u32;
-typedef signed int				s32;
-#else
-#include <string.h>
-#include "stm32f10x.h"
-#endif
+
 template <typename T>
 class list
 {
@@ -157,34 +154,6 @@ private:
 	size_t size_;
 
 };
-#ifndef RUN_IN_ARM
-template <typename T>
-void coutList(const list<T>& listIn)
-{
-	/*list<T>::Iterator it;*/
-	list<T>::Iterator it;
-	it = listIn.begin_;
-	do
-	{
-		cout << "elem = " << it->elem_ << endl;
-		it = it->next_;
-	} while (it != listIn.begin_);
-}
-template <typename T>
-void checkList(const list<T>& listIn)
-{
-	list<T>::Iterator it;
-	/*Node<T>* it;*/
-	it = listIn.begin_;
-	unsigned char errorFlag = 0;
-	do
-	{
-		if (it->next_->prev_ != it)
-			errorFlag++;
-	} while (it != listIn.begin_);
-	cout << "checkList Error number: " << (int)errorFlag << endl;
-}
-#endif
+
 #endif 
 /*End of File*/
-
