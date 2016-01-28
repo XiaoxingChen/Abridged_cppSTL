@@ -62,7 +62,5 @@ protected:
 
 };
 
-
-
 #endif
 /*End of File*/
