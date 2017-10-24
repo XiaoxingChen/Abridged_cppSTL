@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <string.h>
 
-template <typename T, uint8_t N>
+template <typename T, uint16_t N>
 class fixed_vector
 {
 	public:
@@ -49,17 +49,21 @@ class fixed_vector
 	*/
 		bool remove(const T& obj)
 		{
-			T* ptr = find(obj);
-			if(ptr == NULL)
-				return false;
-			
-			uint16_t dist = static_array_ + sizeof(T) * (size() - 1) - ptr;
-			
-			if(dist > 0)
-				memmove(ptr, ptr + 1, dist);
-			
-			size_--;
-			return true;
+            T* ptr = begin();
+            uint16_t dist = 0;
+            while (ptr != end())
+            {
+                if (obj == *ptr)
+                {
+                    dist++;
+                }
+                else if (dist > 0)
+                {
+                    *(ptr - dist) = *ptr;
+                }
+                ptr++;
+            }
+            return true;
 		}
 		
 		void clear()	{ size_ = 0; }
@@ -85,7 +89,7 @@ class fixed_vector
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
 	*/
-		T& operator[](uint8_t pos)
+		T& operator[](uint16_t pos)
 		{
 			return static_array_[pos];
 		}
@@ -96,12 +100,22 @@ class fixed_vector
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
 	*/
-		const T& operator[] (uint8_t pos) const
+		const T& operator[] (uint16_t pos) const
 		{
 			return static_array_[pos];
 		}
 		
-		uint8_t size() { return size_; }
+		uint16_t size() { return size_; }
+
+        T* begin()
+        {
+            return static_array_;
+        }
+
+        T* end()
+        {
+            return &static_array_[size_];
+        }
 
 /**
 	* @brief  Returns a reference to the element at specified location pos,
@@ -143,7 +157,7 @@ class fixed_vector
 	
 	private:
 		T static_array_[N == 0 ? 1 : N];
-		uint8_t size_;
+		uint16_t size_;
 };
 #endif
 //end of file

@@ -5,10 +5,10 @@
 #include <algorithm>
 
 using namespace std;
-#define VECT_LEN 50
+#define VECT_LEN 100
 #define VECT_TYPE uint16_t
 
-void remove_test();
+void remove_test(uint16_t test_time);
 
 void print_vector(fixed_vector<VECT_TYPE, VECT_LEN>& v)
 {
@@ -33,49 +33,73 @@ void print_vector(vector<VECT_TYPE>& v)
 
 int main()
 {
-    /*cin.get();*/
     cout << "start" << endl;
-    /*cin.get();*/
-    remove_test();
+    remove_test(20);
     
     cin.get();
 	return 0;
 }
 
-void remove_test()
+void remove_test(uint16_t test_time)
 {
     const uint8_t test_buf_len = 30;
 	VECT_TYPE originArray[test_buf_len];
     vector<VECT_TYPE> stdv;
     fixed_vector<VECT_TYPE, VECT_LEN> v;
 
-    for (int i = 0; i < test_buf_len; i++)
-    {
-        originArray[i] = rand() % 10;
-        stdv.push_back(originArray[i]);
-        v.push_back(originArray[i]);
-    }
+    cout << "*** remove_test ***" << endl;
 
-    VECT_TYPE remove_num = 5;
-    remove(stdv.begin(), stdv.end(), remove_num);
-    v.remove(remove_num);
-
-    bool test_ok = true;
-   
-    do 
+    for (int j = 0; j < test_time; j++)
     {
-        if (v.size() != stdv.size())
+        stdv.clear();
+        v.clear();
+        for (int i = 0; i < test_buf_len; i++)
         {
-            test_ok = false;
-            cout << "test faild, length mismatch" << endl;
-            break;
+            originArray[i] = rand() % 10;
+            stdv.push_back(originArray[i]);
+            v.push_back(originArray[i]);
         }
-    
-    } while (0);
 
-    if (!test_ok)
-    {
-        print_vector(v);
-        print_vector(stdv);
+        VECT_TYPE remove_num = rand() % 10;
+        remove(stdv.begin(), stdv.end(), remove_num);
+        v.remove(remove_num);
+
+        bool test_ok = true;
+
+        do
+        {
+            if (v.size() != stdv.size())
+            {
+                test_ok = false;
+                cout << "test faild, length mismatch. fixedv:" << v.size()<< " stdv:" << stdv.size() << endl;
+                break;
+            }
+
+            for (int i = 0; i < v.size(); i++)
+            {
+                if (v.at(i) != stdv.at(i))
+                {
+                    test_ok = false;
+                    cout << "test faild, data mismatch" << endl;
+                    break;
+                }
+            }
+
+        } while (0);
+
+        if (!test_ok)
+        {
+            cout << "test failed" << endl;
+            print_vector(v);
+            print_vector(stdv);
+        }
+        else
+        {
+            cout << "test" << j << "vok!" << endl;
+        }
+        
     }
+
+    
+    
 }
