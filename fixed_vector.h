@@ -11,37 +11,38 @@
 #include <stdint.h>
 #include <string.h>
 
-template <typename T, uint8_t N>
-class fixed_vector
+class fixed_vector_base
 {
 	public:
-		
+
 /**
 	* @brief  	Constructor
 	* @array:	static array for queue
 	* @size: 	size of static array
 	* @retval 	invalid
 	*/
-		fixed_vector()
-			:size_(0)
+		fixed_vector_base(T* ref_array, uint16_t MAX_NUM)
+			:static_array_(ref_array),
+            N(MAX_NUM),
+            size_(0)
 		{
-			
+
 		}
 
 /**
 	* @brief  push an element to the back of the vector
 	* @param  obj
 	* @retval Success or Not
-	*/		
+	*/
 		bool push_back(const T& obj)
 		{
 			if(size_ == N)
 				return false;
-			
+
 			static_array_[size_++] = obj;
 			return true;
 		}
-		
+
 /**
 	* @brief  find the object and remove from the vector
 	* @param  value
@@ -52,16 +53,16 @@ class fixed_vector
 			T* ptr = find(obj);
 			if(ptr == NULL)
 				return false;
-			
+
 			uint16_t dist = static_array_ + sizeof(T) * (size() - 1) - ptr;
-			
+
 			if(dist > 0)
 				memmove(ptr, ptr + 1, dist);
-			
+
 			size_--;
 			return true;
 		}
-		
+
 		void clear()	{ size_ = 0; }
 
 /**
@@ -78,37 +79,37 @@ class fixed_vector
 			}
 			return NULL;
 		}
-		
+
 /**
-	* @brief  Returns a reference to the element at specified location pos. 
+	* @brief  Returns a reference to the element at specified location pos.
 	* 				No bounds checking is performed.
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
 	*/
-		T& operator[](uint8_t pos)
+		T& operator[](uint16_t pos)
 		{
 			return static_array_[pos];
 		}
-		
+
 /**
-	* @brief  Returns a reference to the element at specified location pos. 
+	* @brief  Returns a reference to the element at specified location pos.
 	* 				No bounds checking is performed.
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
 	*/
-		const T& operator[] (uint8_t pos) const
+		const T& operator[] (uint16_t pos) const
 		{
 			return static_array_[pos];
 		}
-		
-		uint8_t size() { return size_; }
+
+		uint16_t size() { return size_; }
 
 /**
 	* @brief  Returns a reference to the element at specified location pos,
 	* 				with bounds checking.
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
-	*/	
+	*/
 	T& at(size_t pos)
 	{
 		if(!(pos < N))
@@ -117,17 +118,17 @@ class fixed_vector
 			throw static_array_[0];
 #else
 			while(1);
-#endif		
+#endif
 		}
 		return static_array_[pos];
 	}
-	
+
 /**
 	* @brief  Returns a reference to the element at specified location pos,
 	* 				with bounds checking.
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
-	*/		
+	*/
 	const T& at(size_t pos) const
 	{
 		if(!(pos < N))
@@ -136,14 +137,25 @@ class fixed_vector
 			throw static_array_[0];
 #else
 			while(1);
-#endif		
+#endif
 		}
 		return static_array_[pos];
 	}
-	
+
 	private:
-		T static_array_[N == 0 ? 1 : N];
-		uint8_t size_;
+		// T static_array_[N == 0 ? 1 : N];
+        T*& static_array_;
+        const uint16_t N;
+		uint16_t size_;
+};
+
+template <typename T, uint16_t N>
+class fixed_vector: public fixed_vector_base
+{
+    public:
+        fixed_vector():fixed_vector_base(static_array_, N){}
+    private:
+        T static_array_[N == 0 ? 1 : N];
 };
 #endif
 //end of file
