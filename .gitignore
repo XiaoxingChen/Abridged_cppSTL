@@ -383,3 +383,5 @@ OpenCover/
 *.vcxproj
 *.vcxproj.filters
 *.sln
+
+fixed_vector_unit_test/remove_test/build/

@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <string.h>
 
+template<typename T>
 class fixed_vector_base
 {
 	public:
@@ -149,13 +150,13 @@ class fixed_vector_base
 		uint16_t size_;
 };
 
-template <typename T, uint16_t N>
-class fixed_vector: public fixed_vector_base
+template <typename T, uint16_t NUM>
+class fixed_vector: public fixed_vector_base<T>
 {
     public:
-        fixed_vector():fixed_vector_base(static_array_, N){}
+        fixed_vector():fixed_vector_base(static_array_, NUM){}
     private:
-        T static_array_[N == 0 ? 1 : N];
+        T static_array_[NUM == 0 ? 1 : NUM];
 };
 #endif
 //end of file
