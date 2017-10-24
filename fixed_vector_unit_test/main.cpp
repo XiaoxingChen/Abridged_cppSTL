@@ -9,6 +9,7 @@ using namespace std;
 #define VECT_TYPE uint16_t
 
 void remove_test(uint16_t test_time);
+void erase_test(uint16_t test_time);
 
 void print_vector(fixed_vector<VECT_TYPE, VECT_LEN>& v)
 {
@@ -31,10 +32,22 @@ void print_vector(vector<VECT_TYPE>& v)
 
 }
 
+void print_array(VECT_TYPE* array, uint16_t len)
+{
+    cout << "origin_array:\t";
+    for (int i = 0; i < len; i++)
+    {
+        cout << array[i] << " ";
+    }
+    cout << endl;
+}
+
 int main()
 {
     cout << "start" << endl;
     remove_test(20);
+    erase_test(50);
+    
     
     cin.get();
 	return 0;
@@ -47,7 +60,8 @@ void remove_test(uint16_t test_time)
     vector<VECT_TYPE> stdv;
     fixed_vector<VECT_TYPE, VECT_LEN> v;
 
-    cout << "*** remove_test ***" << endl;
+    cout << endl <<  "********* remove_test *********" << endl;
+    bool test_ok = true;
 
     for (int j = 0; j < test_time; j++)
     {
@@ -63,8 +77,6 @@ void remove_test(uint16_t test_time)
         VECT_TYPE remove_num = rand() % 10;
         remove(stdv.begin(), stdv.end(), remove_num);
         v.remove(remove_num);
-
-        bool test_ok = true;
 
         do
         {
@@ -95,11 +107,77 @@ void remove_test(uint16_t test_time)
         }
         else
         {
-            cout << "test" << j << "vok!" << endl;
+            /*cout << "test" << j << "vok!" << endl;*/
         }
         
     }
+    if (test_ok)
+    {
+        cout << "test for " << test_time << "times passed!" << endl;
+    }
+}
 
-    
-    
+void erase_test(uint16_t test_time)
+{
+    const uint8_t test_buf_len = 30;
+    VECT_TYPE originArray[test_buf_len];
+    vector<VECT_TYPE> stdv;
+    fixed_vector<VECT_TYPE, VECT_LEN> v;
+
+    cout << endl << "********* erase_test *********" << endl;
+    bool test_ok = true;
+
+    for (int t = 0; t < test_time; t++)
+    {
+        stdv.clear();
+        v.clear();
+        for (int i = 0; i < test_buf_len; i++)
+        {
+            originArray[i] = rand() % 10;
+            stdv.push_back(originArray[i]);
+            v.push_back(originArray[i]);
+        }
+
+        stdv.erase(stdv.begin());
+        v.erase(v.begin());
+
+        do
+        {
+            if (v.size() != stdv.size())
+            {
+                test_ok = false;
+                cout << "test faild, length mismatch. fixedv:" << v.size() << " stdv:" << stdv.size() << endl;
+                break;
+            }
+
+            for (int i = 0; i < v.size(); i++)
+            {
+                if (v.at(i) != stdv.at(i))
+                {
+                    test_ok = false;
+                    cout << "test faild, data mismatch" << endl;
+                    break;
+                }
+            }
+
+        } while (0);
+
+        if (!test_ok)
+        {
+            cout << "test failed" << endl;
+            print_array(originArray, test_buf_len);
+            print_vector(v);
+            print_vector(stdv);
+        }
+        else
+        {
+            /*cout << "test" << j << "vok!" << endl;*/
+        }
+
+    }
+    if (test_ok)
+    {
+        cout << "test for " << test_time << "times passed!" << endl;
+    }
+
 }

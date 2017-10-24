@@ -117,6 +117,16 @@ class fixed_vector
             return &static_array_[size_];
         }
 
+        T* erase(T* p)
+        {
+            if (p < begin() || p >= end())
+                return NULL;
+            uint16_t len = end() - p;
+            memmove(p, p + 1, len * sizeof(T));
+            size_--;
+            return p;
+        }
+
 /**
 	* @brief  Returns a reference to the element at specified location pos,
 	* 				with bounds checking.
