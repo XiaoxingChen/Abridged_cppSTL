@@ -10,6 +10,7 @@ using namespace std;
 
 void remove_test(uint16_t test_time);
 void erase_test(uint16_t test_time);
+void push_remove_test();
 
 void print_vector(fixed_vector<VECT_TYPE, VECT_LEN>& v)
 {
@@ -47,7 +48,7 @@ int main()
     cout << "start" << endl;
     remove_test(20);
     erase_test(50);
-    
+    push_remove_test(); 
     
     cin.get();
 	return 0;
@@ -109,6 +110,13 @@ void remove_test(uint16_t test_time)
         {
             /*cout << "test" << j << "vok!" << endl;*/
         }
+#if     0 
+        cout << "remove num = " << remove_num << endl;
+        print_array(originArray, test_buf_len);
+        print_vector(v);
+        print_vector(stdv);
+#endif
+        
         
     }
     if (test_ok)
@@ -180,4 +188,21 @@ void erase_test(uint16_t test_time)
         cout << "test for " << test_time << "times passed!" << endl;
     }
 
+}
+
+void push_remove_test()
+{
+    fixed_vector<VECT_TYPE, VECT_LEN> v;
+
+    v.push_back(10);
+    v.push_back(12);
+    v.push_back(0);
+    v.push_back(7);
+    v.push_back(5);
+    print_vector(v);
+    v.remove(7);
+    cout << "remove(7)" << endl;
+    print_vector(v);
+
+    
 }

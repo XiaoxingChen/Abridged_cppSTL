@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(remove_test)
+project(fixed_vector_test)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
-add_executable(remove_test main.cpp)
+add_executable(fixed_vector_test main.cpp)
 set(CMAKE_BUILD_TYPE Debug)
