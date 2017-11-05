@@ -1,33 +1,78 @@
 #include "Matrixs.h"
 
-//////////////////////////////////////////////////////////////////////
-// Constructor for CMSIS matrix operation
-// Created at 2017/07/21 by chenxx
-//////////////////////////////////////////////////////////////////////
-CMatrix::CMatrix(int nRows, int nCols,float* pData)
+/**
+* @brief  Constructor
+* @param  nRows: rows of the matrix
+* @param  nCols: colums of the matrix
+* @param  pData: memory that allocated for the matrix
+* @retval None
+*/
+CMatrixs::CMatrixs(int nRows, int nCols,float* pData)
 {
 	arm_mat_init_f32(&MatIns_, nRows, nCols, pData);
 }
 
-CMatrix::~CMatrix()
+/**
+* @brief  Constructor for square matrix
+* @param  nSize: rows and also colums of the matrix
+* @param  pData: memory that allocated for the matrix
+* @retval None
+*/
+CMatrixs::CMatrixs(int nSize, float* pData)
+{
+    arm_mat_init_f32(&MatIns_, nSize, nSize, pData);
+}
+
+/**
+* @brief  Destructor
+* @param  None
+* @retval None
+*/
+CMatrixs::~CMatrixs()
 {
 
 }
 
-bool CMatrix::MakeUnitMatrix()
+/**
+* @brief  Set current matrix to unit matrix
+* @param  None
+* @retval bool: whether the operation is invalid or not
+*/
+bool CMatrixs::MakeUnitMatrix()
 {
-	if(MatIns_.numCols != MatIns_.numRows)
-		return false;
+    if (MatIns_.numCols != MatIns_.numRows)
+        return false;
 
-	for (int i=0; i < MatIns_.numCols; ++i)
-        for (int j=0; j < MatIns_.numCols; ++j)
+    for (int i = 0; i < MatIns_.numCols; ++i)
+        for (int j = 0; j < MatIns_.numCols; ++j)
             if (i == j)
                 SetElement(i, j, 1);
+            else
+                SetElement(i, j, 0);
 
     return true;
 }
 
-bool CMatrix::SetElement(int nRow, int nCol,float value)
+/**
+* @brief  Set current matrix to zero matrix
+* @param  None
+* @retval bool: whether the operation is invalid or not
+*/
+void CMatrixs::MakeZeroMatrix()
+{
+    for (int i = 0; i < MatIns_.numCols; ++i)
+        for (int j = 0; j < MatIns_.numCols; ++j)
+            SetElement(i, j, 0);
+}
+
+/**
+* @brief  Set the specified element value
+* @param  nRows: rows of the element
+* @param  nCols: colums of the element
+* @param  value: value of the target element
+* @retval bool: whether the operation is invalid or not
+*/
+bool CMatrixs::SetElement(int nRow, int nCol,float value)
 {
     if (nCol < 0 || nCol >= MatIns_.numCols || nRow < 0 || nRow >= MatIns_.numRows)
         return false;						// array bounds error
@@ -39,28 +84,64 @@ bool CMatrix::SetElement(int nRow, int nCol,float value)
     return true;
 }
 
-float CMatrix::GetElement(int nRow, int nCol) const
+/**
+* @brief  Set the data¡¡of the matrix from an array
+* @param  pData: pointer of the array
+* @retval None
+* @Note  This function will not check the length of the array
+*/
+void CMatrixs::SetData(const float* pData)
+{
+    memcpy(MatIns_.pData, pData, sizeof(float) * MatIns_.numCols * MatIns_.numRows);
+}
+
+/**
+* @brief  Get the value of the specified element
+* @param  pData: pointer of the array
+* @param  nRows: rows of the element
+* @param  nCols: colums of the element
+* @retval value of the element
+*/
+float CMatrixs::GetElement(int nRow, int nCol) const
 {
     return MatIns_.pData[nCol + nRow * MatIns_.numCols] ;
 }
 
-int	CMatrix::GetNumColumns() const
+/**
+* @brief  Get the column number of the matrix
+* @retval column number
+*/
+int	CMatrixs::GetNumColumns() const
 {
     return MatIns_.numCols;
 }
 
-int	CMatrix::GetNumRows() const
+/**
+* @brief  Get the row number of the matrix
+* @retval row number
+*/
+int	CMatrixs::GetNumRows() const
 {
     return MatIns_.numRows;
 }
 
-bool CMatrix::SameDimensions(const CMatrix& other) const
+/**
+* @brief  Judge whether the two matrices have the same rows and columns
+* @param  other: another matrix
+* @retval Ture: same; False: Not;
+*/
+bool CMatrixs::SameDimensions(const CMatrixs& other) const
 {
     return (other.GetNumRows() == GetNumRows()
         &&  other.GetNumColumns() == GetNumColumns());
 }
 
-CMatrix& CMatrix::operator=(const CMatrix& other)
+/**
+* @brief  Copy constructor
+* @param  other: another matrix
+* @retval Useless
+*/
+CMatrixs& CMatrixs::operator=(const CMatrixs& other)
 {
     if (&other != this && SameDimensions(other))
     {
@@ -70,7 +151,12 @@ CMatrix& CMatrix::operator=(const CMatrix& other)
     return *this ;
 }
 
-bool CMatrix::operator==(const CMatrix& other) const
+/**
+* @brief  Judge whether the two matrices are the same
+* @param  other: another matrix
+* @retval The same or not
+*/
+bool CMatrixs::operator==(const CMatrixs& other) const
 {
     if (!SameDimensions(other))
         return false;
@@ -87,75 +173,194 @@ bool CMatrix::operator==(const CMatrix& other) const
     return true;
 }
 
-bool CMatrix::operator!=(const CMatrix& other) const
+/**
+* @brief  Judge whether the two matrices are different
+* @param  other: another matrix
+* @retval Different or not
+*/
+bool CMatrixs::operator!=(const CMatrixs& other) const
 {
     return !(*this == other);
 }
 
-bool CMatrix::add(const CMatrix& other, CMatrix& result) const
+/**
+* @brief Floating-point matrix addition.
+* @param[in]    other ref to the second input matrix structure
+* @param[out]   result ref to output matrix structure
+* @return       Wheter function success
+*/
+bool CMatrixs::add(const CMatrixs& other, CMatrixs& result) const
 {
-	return arm_mat_add_f32(&MatIns_, &other.MatIns_, &result.MatIns_);
+	arm_status status  =  arm_mat_add_f32(&MatIns_, &other.MatIns_, &result.MatIns_);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        result.MakeZeroMatrix();
+        return false;
+    }
+    return true;
 }
 
-bool CMatrix::sub(const CMatrix& other, CMatrix& result) const
+/**
+* @brief Floating-point matrix subtraction.
+* @param[in]    other ref to the second input matrix structure
+* @param[out]   result ref to output matrix structure
+* @return       Wheter function success
+*/
+bool CMatrixs::sub(const CMatrixs& other, CMatrixs& result) const
 {
-    return arm_mat_sub_f32(&MatIns_, &other.MatIns_, &result.MatIns_);
+    arm_status status  =  arm_mat_sub_f32(&MatIns_, &other.MatIns_, &result.MatIns_);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        result.MakeZeroMatrix();
+        return false;
+    }
+    return true;
 }
 
-bool CMatrix::mult(const CMatrix& other, CMatrix& result) const
+/**
+* @brief Floating-point matrix multiplication.
+* @param[in]    other ref to the second input matrix structure
+* @param[out]   result ref to output matrix structure
+* @return       Wheter function success
+*/
+bool CMatrixs::mult(const CMatrixs& other, CMatrixs& result) const
 {
-    return arm_mat_mult_f32(&MatIns_, &other.MatIns_, &result.MatIns_);
+    arm_status status  =  arm_mat_mult_f32(&MatIns_, &other.MatIns_, &result.MatIns_);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        result.MakeZeroMatrix();
+        return false;
+    }
+    return true;
 }
 
-bool CMatrix::scale(float value, CMatrix& result) const
+/**
+* @brief Floating-point matrix scaling..
+* @param[in]    other ref to the second input matrix structure
+* @param[out]   result ref to output matrix structure
+* @return       Wheter function success
+*/
+bool CMatrixs::scale(float value, CMatrixs& result) const
 {
-	return arm_mat_scale_f32(&MatIns_, value, &result.MatIns_);
+	arm_status status  =  arm_mat_scale_f32(&MatIns_, value, &result.MatIns_);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        result.MakeZeroMatrix();
+        return false;
+    }
+    return true;
 }
 
-bool CMatrix::operator+=(const CMatrix& other) const
+bool CMatrixs::operator+=(const CMatrixs& other)
 {
-    return arm_mat_add_f32(&MatIns_, &other.MatIns_, &MatIns_);
+    arm_status status = arm_mat_add_f32(&MatIns_, &other.MatIns_, &MatIns_);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        MakeZeroMatrix();
+        return false;
+    }
+    return true;
 }
 
-bool CMatrix::operator-=(const CMatrix& other) const
+bool CMatrixs::operator-=(const CMatrixs& other)
 {
-    return arm_mat_sub_f32(&MatIns_, &other.MatIns_, &MatIns_);
+    arm_status status = arm_mat_sub_f32(&MatIns_, &other.MatIns_, &MatIns_);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        MakeZeroMatrix();
+        return false;
+    }
+    return true;
 }
 
-bool CMatrix::operator*=(float value) const
+bool CMatrixs::operator*=(float value)
 {
-    return arm_mat_scale_f32(&MatIns_, value, &MatIns_);
+    arm_status status = arm_mat_scale_f32(&MatIns_, value, &MatIns_);
+    return (ARM_MATH_SUCCESS == status);
 }
 
-bool CMatrix::operator*=(const CMatrix& other) 
+bool CMatrixs::operator*=(const CMatrixs& other) 
 {
-	return arm_mat_mult_f32(&MatIns_, &other.MatIns_, &MatIns_);
+    arm_status status = arm_mat_mult_f32(&MatIns_, &other.MatIns_, &MatIns_);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        MakeZeroMatrix();
+        return false;
+    }
+    return true;
 }
 
-bool CMatrix::operator/=(float value) 
+bool CMatrixs::operator/=(float value) 
 {
-	return arm_mat_scale_f32(&MatIns_, (1.0f / value), &MatIns_);
+    arm_status status = arm_mat_scale_f32(&MatIns_, (1.0f / value), &MatIns_);
+    return (ARM_MATH_SUCCESS == status);
 }
 
-bool CMatrix::Transpose()
+bool CMatrixs::Transpose(CMatrixs& result) const
 {
-	arm_mat_trans_f32(&MatIns_, &MatIns_);
+    arm_status status  = arm_mat_trans_f32(&MatIns_, &result.MatIns_);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        result.MakeZeroMatrix();
+        return false;
+    }
+    return true;
 }
 
-bool CMatrix::Transpose(CMatrix& result) const
-{
-	arm_mat_trans_f32(&MatIns_, &result.MatIns_);
-}
-
-bool CMatrix::InvertGaussJordan()
-{
-	arm_status status = arm_mat_inverse_f32(&MatIns_, &MatIns_);
-	return (ARM_MATH_SUCCESS == status);
-}
-
-bool CMatrix::InvertGaussJordan(CMatrix& result) const
+bool CMatrixs::InvertGaussJordan(CMatrixs& result) const
 {
 	arm_status status = arm_mat_inverse_f32(&MatIns_, &result.MatIns_);
-	return (ARM_MATH_SUCCESS == status);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        result.MakeZeroMatrix();
+        return false;
+    }
+    return true;
 }
 
+#if ENABLE_PRINT
+#define STDIO_OUTPUT 1
+const uint16_t PRINT_BUFF_LEN = 200;
+static uint8_t printbuff[PRINT_BUFF_LEN];
+#include <stdio.h>
+bool CMatrixs::print(char* matname)
+{
+    uint16_t cnt = 0;
+    cnt += sprintf((char*)(printbuff + cnt), "\t\t\t\t%s", matname);
+    for (int i = 0; i < MatIns_.numRows; i++)
+    {
+        for (int j = 0; j < MatIns_.numCols; j++)
+        {
+            cnt += sprintf((char*)(printbuff + cnt), " %f", GetElement(i, j));
+        }
+    }
+    cnt += sprintf((char*)(printbuff + cnt), "\r\n");
+#if STDIO_OUTPUT
+    puts((const char*)printbuff);
+#else
+    Console::Instance()->puts((const char*)printbuff);
+#endif
+
+    return false;
+}
+
+bool CMatrixs::printRaw(char* matname)
+{
+    uint16_t cnt = 0;
+    cnt += sprintf((char*)(printbuff + cnt), "\t\t\t\t%s", matname);
+    for (int i = 0; i < MatIns_.numRows; i++)
+    {
+        for (int j = 0; j < MatIns_.numCols; j++)
+        {
+            cnt += sprintf((char*)(printbuff + cnt), " %X", *(uint32_t*)&MatIns_.pData[j + i * MatIns_.numCols]);
+        }
+    }
+    cnt += sprintf((char*)(printbuff + cnt), "\r\n");
+#if STDIO_OUTPUT
+    puts((const char*)printbuff);
+#else
+    Console::Instance()->puts((const char*)printbuff);
+#endif
+    return false;
+}
+#endif

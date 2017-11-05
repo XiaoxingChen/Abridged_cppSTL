@@ -7,7 +7,7 @@
 * @brief   This is the static version of matrix class named Matrix.
 *		   The head the the origin Matrix.h:
 *		//////////////////////////////////////////////////////////
-*		//	Interfaces declaration of CMatrix for matrix operation
+*		//	Interfaces declaration of CMatrixs for matrix operation
 *		//	Modified by Tang Qing
 *       //	Date: Oct 19, 2009
 *       //
@@ -15,13 +15,15 @@
 *       //	Modified by YichaoSun
 *       //	Date: Dec 25, 2009
 *		//////////////////////////////////////////////////////////
-*			Part of the operation of from CMatrix change to use the
+*			Part of the operation of from CMatrixs change to use the
 *			CMSIS arm_math version.
 ******************************************************************************/
 #ifndef _CMATRIXS_H_
 #define _CMATRIXS_H_
 
 #include "arm_math.h"
+
+#define ENABLE_PRINT 1
 
 class CMatrixs
 {
@@ -31,10 +33,17 @@ class CMatrixs
 	    // Constructor and destructor
 	    //
 
-		CMatrix(int nRows, int nCols, float* pData);//constructor
-		CMatrix(int nSize, float* pData);			//squar matrix constructor
+		CMatrixs(int nRows, int nCols, float* pData);//constructor
+		CMatrixs(int nSize, float* pData);			//squar matrix constructor
 		bool MakeUnitMatrix();
-		virtual ~CMatrix();
+        void MakeZeroMatrix();
+		virtual ~CMatrixs();
+
+        // Output and display
+#if ENABLE_PRINT
+        bool print(char* matname = "");
+        bool printRaw(char* matname = "");
+#endif
 
 		//
    	    // operation of elements and value
@@ -42,6 +51,7 @@ class CMatrixs
 
 		bool	SetElement(int nRow, int nCol,float value);
     	float	GetElement(int nRow, int nCol) const;
+        void    SetData(const float* pData);
         int		GetNumColumns() const;
         int		GetNumRows() const;
 
@@ -49,32 +59,32 @@ class CMatrixs
         // mathematical operation
         //
 
-        CMatrix& operator=(const CMatrix& other);
-        bool operator==(const CMatrix& other) const;
-        bool operator!=(const CMatrix& other) const;
+        CMatrixs& operator=(const CMatrixs& other);
+        bool operator==(const CMatrixs& other) const;
+        bool operator!=(const CMatrixs& other) const;
 
-        bool add(const CMatrix& other, CMatrix& result) const;
-        bool sub(const CMatrix& other, CMatrix& result) const;
- 		bool mult(const CMatrix& other, CMatrix& result) const;
-		bool scale(float value, CMatrix& result) const;
+        bool add(const CMatrixs& other, CMatrixs& result) const;
+        bool sub(const CMatrixs& other, CMatrixs& result) const;
+ 		bool mult(const CMatrixs& other, CMatrixs& result) const;
+		bool scale(float value, CMatrixs& result) const;
 
-        bool operator+=(const CMatrix& other);//TODO: test
-        bool operator-=(const CMatrix& other);//TODO: test
+        bool operator+=(const CMatrixs& other);//TODO: test
+        bool operator-=(const CMatrixs& other);//TODO: test
         bool operator*=(float value) ;
-        bool operator*=(const CMatrix& other) ;
+        bool operator*=(const CMatrixs& other) ;
         bool operator/=(float value) ;
         //complex mult
-        bool CMul(const CMatrix& AR, const CMatrix& AI, const CMatrix& BR, const CMatrix& BI, CMatrix& CR, CMatrix& CI) const;
+        bool CMul(const CMatrixs& AR, const CMatrixs& AI, const CMatrixs& BR, const CMatrixs& BI, CMatrixs& CR, CMatrixs& CI) const;
 
-        bool Transpose();
+        //bool Transpose();
 
-		bool Transpose(CMatrix& result) const;
+		bool Transpose(CMatrixs& result) const;
 
-        bool SameDimensions(const CMatrix& other) const;
+        bool SameDimensions(const CMatrixs& other) const;
 
-        bool InvertGaussJordan();
+        //bool InvertGaussJordan();
 
-		bool InvertGaussJordan(CMatrix& result) const;
+		bool InvertGaussJordan(CMatrixs& result) const;
 
     protected:
 		arm_matrix_instance_f32 MatIns_;
