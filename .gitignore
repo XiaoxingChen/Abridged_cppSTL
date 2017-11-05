@@ -385,3 +385,4 @@ OpenCover/
 *.sln
 
 fixed_vector_unit_test/build/
+CMatrixs_unit_test/build/
