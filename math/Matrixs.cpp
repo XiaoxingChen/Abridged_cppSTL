@@ -41,7 +41,11 @@ CMatrixs::~CMatrixs()
 bool CMatrixs::MakeUnitMatrix()
 {
     if (MatIns_.numCols != MatIns_.numRows)
+    {
+        MakeZeroMatrix();
         return false;
+    }
+        
 
     for (int i = 0; i < MatIns_.numCols; ++i)
         for (int j = 0; j < MatIns_.numCols; ++j)
@@ -268,6 +272,11 @@ bool CMatrixs::Scale(float value, CMatrixs& result) const
     return true;
 }
 
+/**
+* @brief Floating-point matrix addition operator reload
+* @param[in]    other ref to the second input matrix structure
+* @return       Wheter function success
+*/
 bool CMatrixs::operator+=(const CMatrixs& other)
 {
     arm_status status = arm_mat_add_f32(&MatIns_, &other.MatIns_, &MatIns_);
@@ -279,6 +288,11 @@ bool CMatrixs::operator+=(const CMatrixs& other)
     return true;
 }
 
+/**
+* @brief Floating-point matrix subtraction operator reload
+* @param[in]    other ref to the second input matrix structure
+* @return       Wheter function success
+*/
 bool CMatrixs::operator-=(const CMatrixs& other)
 {
     arm_status status = arm_mat_sub_f32(&MatIns_, &other.MatIns_, &MatIns_);
@@ -290,12 +304,22 @@ bool CMatrixs::operator-=(const CMatrixs& other)
     return true;
 }
 
+/**
+* @brief Floating-point matrix dot subtraction operator reload
+* @param[in]    other ref to the second input matrix structure
+* @return       Wheter function success
+*/
 bool CMatrixs::operator*=(float value)
 {
     arm_status status = arm_mat_scale_f32(&MatIns_, value, &MatIns_);
     return (ARM_MATH_SUCCESS == status);
 }
 
+/**
+* @brief Floating-point matrix cross subtraction operator reload
+* @param[in]    other ref to the second input matrix structure
+* @return       Wheter function success
+*/
 bool CMatrixs::operator*=(const CMatrixs& other) 
 {
     arm_status status = arm_mat_mult_f32(&MatIns_, &other.MatIns_, &MatIns_);
@@ -307,12 +331,22 @@ bool CMatrixs::operator*=(const CMatrixs& other)
     return true;
 }
 
+/**
+* @brief Floating-point matrix div operator reload
+* @param[in]    other ref to the second input matrix structure
+* @return       Wheter function success
+*/
 bool CMatrixs::operator/=(float value) 
 {
     arm_status status = arm_mat_scale_f32(&MatIns_, (1.0f / value), &MatIns_);
     return (ARM_MATH_SUCCESS == status);
 }
 
+/**
+* @brief Floating-point matrix transpose.
+* @param[out] result reference to the output matrix
+* @return       Wheter function success
+*/
 bool CMatrixs::Transpose(CMatrixs& result) const
 {
     arm_status status  = arm_mat_trans_f32(&MatIns_, &result.MatIns_);
@@ -324,6 +358,12 @@ bool CMatrixs::Transpose(CMatrixs& result) const
     return true;
 }
 
+/**
+* @brief Floating-point matrix inverse.
+* @param[out]   result reference to the output matrix
+* @return       Wheter function success
+* @note    The origin matrix will become unit matrix after calculation
+*/
 bool CMatrixs::InvertGaussJordan(CMatrixs& result) const
 {
 	arm_status status = arm_mat_inverse_f32(&MatIns_, &result.MatIns_);

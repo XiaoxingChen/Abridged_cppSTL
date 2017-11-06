@@ -3,8 +3,8 @@ project(matrix_test)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../math
 	${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DARM_MATH_CM4")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DARM_MATH_CM4")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DARM_MATH_CM4 -DARM_MATH_MATRIX_CHECK")
+set(CMAKE_C_FLAGS ${CMAKE_CXX_FLAGS})
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../math math)
 
 add_executable(matrix_test main.cpp 

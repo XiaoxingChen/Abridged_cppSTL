@@ -5,13 +5,15 @@ using namespace std;
 void inverseTest();
 void add_test();
 void sub_test();
+void mult_test();
 
 int main()
 {
 	cout << "start" <<endl;    
     //inverseTest();
     //add_test();
-    sub_test();
+    //sub_test();
+    mult_test();
     cin.get();
 	return 0;
  	
@@ -129,9 +131,52 @@ void sub_test()
     cout << "mat2 = mat1 - mat0" << endl;
     mat1.Sub(mat0, mat2);
     mat2.print("mat2");
+}
+
+void mult_test()
+{
+    cout << "=============== mult test ==============" << endl;
+    const uint16_t MAT_ROW = 2;
+    const uint16_t MAT_COL = 4;
+    float mats0[MAT_ROW * MAT_COL];
+    float mats1[MAT_COL * MAT_ROW];
+    float mats2[MAT_ROW * MAT_ROW];
+    float mats3[MAT_COL * MAT_COL];
+    float mats4[9];
     
 
+    CMatrixs mat0(MAT_ROW , MAT_COL, mats0);
+    CMatrixs mat1(MAT_COL , MAT_ROW, mats1);
+    CMatrixs mat2(MAT_ROW , MAT_ROW, mats2);
+    CMatrixs mat3(MAT_COL , MAT_COL, mats3);
+    CMatrixs mat4(3, mats4);
+    
+    mat4.MakeUnitMatrix();
+    for (int i = 0; i < MAT_ROW; i++)
+    {
+        for (int j = 0; j < MAT_COL; j++)
+        {
+            mat0.SetElement(i, j, 10*i + j);
+            mat1.SetElement(j, i, 1);
+        }
+    }
 
+    mat0.print("mat0");
+    mat1.print("mat1");
+
+    mat0.Mult(mat1, mat2);
+    mat0.RightMult(mat1, mat3);
+
+    mat0.RightMult(mat1, mat4);
+
+    cout << "mat2 = mat0 * mat1" << endl;
+    mat2.print("mat2");
+
+    cout << "mat3 = mat1 * mat0" << endl;
+    mat3.print("mat3");
+
+    cout << "mat4 = mat1 * mat0" << endl;
+    mat4.print("mat4");
 }
 //end of file
 
