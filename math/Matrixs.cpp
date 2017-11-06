@@ -189,7 +189,7 @@ bool CMatrixs::operator!=(const CMatrixs& other) const
 * @param[out]   result ref to output matrix structure
 * @return       Wheter function success
 */
-bool CMatrixs::add(const CMatrixs& other, CMatrixs& result) const
+bool CMatrixs::Add(const CMatrixs& other, CMatrixs& result) const
 {
 	arm_status status  =  arm_mat_add_f32(&MatIns_, &other.MatIns_, &result.MatIns_);
     if (ARM_MATH_SUCCESS != status)
@@ -206,7 +206,7 @@ bool CMatrixs::add(const CMatrixs& other, CMatrixs& result) const
 * @param[out]   result ref to output matrix structure
 * @return       Wheter function success
 */
-bool CMatrixs::sub(const CMatrixs& other, CMatrixs& result) const
+bool CMatrixs::Sub(const CMatrixs& other, CMatrixs& result) const
 {
     arm_status status  =  arm_mat_sub_f32(&MatIns_, &other.MatIns_, &result.MatIns_);
     if (ARM_MATH_SUCCESS != status)
@@ -223,9 +223,26 @@ bool CMatrixs::sub(const CMatrixs& other, CMatrixs& result) const
 * @param[out]   result ref to output matrix structure
 * @return       Wheter function success
 */
-bool CMatrixs::mult(const CMatrixs& other, CMatrixs& result) const
+bool CMatrixs::Mult(const CMatrixs& other, CMatrixs& result) const
 {
     arm_status status  =  arm_mat_mult_f32(&MatIns_, &other.MatIns_, &result.MatIns_);
+    if (ARM_MATH_SUCCESS != status)
+    {
+        result.MakeZeroMatrix();
+        return false;
+    }
+    return true;
+}
+
+/**
+* @brief Floating-point matrix right multiplication.
+* @param[in]    other ref to the second input matrix structure
+* @param[out]   result ref to output matrix structure
+* @return       Wheter function success
+*/
+bool CMatrixs::RightMult(const CMatrixs& other, CMatrixs& result) const
+{
+    arm_status status = arm_mat_mult_f32(&other.MatIns_, &MatIns_, &result.MatIns_);
     if (ARM_MATH_SUCCESS != status)
     {
         result.MakeZeroMatrix();
@@ -240,7 +257,7 @@ bool CMatrixs::mult(const CMatrixs& other, CMatrixs& result) const
 * @param[out]   result ref to output matrix structure
 * @return       Wheter function success
 */
-bool CMatrixs::scale(float value, CMatrixs& result) const
+bool CMatrixs::Scale(float value, CMatrixs& result) const
 {
 	arm_status status  =  arm_mat_scale_f32(&MatIns_, value, &result.MatIns_);
     if (ARM_MATH_SUCCESS != status)

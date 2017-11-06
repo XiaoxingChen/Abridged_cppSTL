@@ -63,10 +63,11 @@ class CMatrixs
         bool operator==(const CMatrixs& other) const;
         bool operator!=(const CMatrixs& other) const;
 
-        bool add(const CMatrixs& other, CMatrixs& result) const;
-        bool sub(const CMatrixs& other, CMatrixs& result) const;
- 		bool mult(const CMatrixs& other, CMatrixs& result) const;
-		bool scale(float value, CMatrixs& result) const;
+        bool Add(const CMatrixs& other, CMatrixs& result) const;
+        bool Sub(const CMatrixs& other, CMatrixs& result) const;
+ 		bool Mult(const CMatrixs& other, CMatrixs& result) const;
+        bool RightMult(const CMatrixs& other, CMatrixs& result) const;
+		bool Scale(float value, CMatrixs& result) const;
 
         bool operator+=(const CMatrixs& other);//TODO: test
         bool operator-=(const CMatrixs& other);//TODO: test

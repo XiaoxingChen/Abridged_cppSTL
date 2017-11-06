@@ -4,12 +4,14 @@
 using namespace std;
 void inverseTest();
 void add_test();
+void sub_test();
 
 int main()
 {
 	cout << "start" <<endl;    
-    inverseTest();
-    add_test();
+    //inverseTest();
+    //add_test();
+    sub_test();
     cin.get();
 	return 0;
  	
@@ -36,7 +38,7 @@ void inverseTest()
 
     mat0.InvertGaussJordan(mat1);
     mat0.SetData(matcs0);
-    mat1.mult(mat0, mat2);
+    mat1.Mult(mat0, mat2);
     mat0.print("mat0");
     mat1.print("mat1");
     mat2.print("mat2");
@@ -60,7 +62,7 @@ void inverseTest()
 
 void add_test()
 {
-    cout << "=============== add test ==============" << endl;
+    cout << "=============== Add test ==============" << endl;
     const uint16_t MAT_SIZE = 3;
     float mats0[MAT_SIZE * MAT_SIZE];
     float mats1[MAT_SIZE * MAT_SIZE];
@@ -88,10 +90,46 @@ void add_test()
     mat1.print("mat1");
 
     cout << "mat3 = mat2 + mat0" << endl;
-    mat2.add(mat0, mat3);
+    mat2.Add(mat0, mat3);
     mat0.print("mat0");
     mat2.print("mat2");
     mat3.print("mat3");
+
+
+}
+
+void sub_test()
+{
+    cout << "=============== Sub test ==============" << endl;
+    const uint16_t MAT_SIZE = 3;
+    float mats0[MAT_SIZE * MAT_SIZE];
+    float mats1[MAT_SIZE * MAT_SIZE];
+    float mats2[MAT_SIZE * MAT_SIZE];
+    float mats3[MAT_SIZE * MAT_SIZE];
+    float mats4[MAT_SIZE * MAT_SIZE];
+    float mats5[MAT_SIZE * MAT_SIZE];
+
+    CMatrixs mat0(MAT_SIZE, mats0);
+    CMatrixs mat1(MAT_SIZE, mats1);
+    CMatrixs mat2(MAT_SIZE, mats2);
+    CMatrixs mat3(MAT_SIZE, mats3);
+    CMatrixs mat4(MAT_SIZE, mats4);
+    CMatrixs mat5(MAT_SIZE, mats5);
+
+    mat0.MakeUnitMatrix();
+    mat1.MakeUnitMatrix();
+    mat2.MakeUnitMatrix();
+    mat3.MakeUnitMatrix();
+
+    mat0.Scale(10, mat1);
+
+    mat0.print("mat0");
+    mat1.print("mat1");
+
+    cout << "mat2 = mat1 - mat0" << endl;
+    mat1.Sub(mat0, mat2);
+    mat2.print("mat2");
+    
 
 
 }
