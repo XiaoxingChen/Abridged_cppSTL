@@ -6,6 +6,10 @@
 * @date    2017-5-19
 * @brief   This file defines the fixed vector.
 ******************************************************************************/
+//release information:
+//2017/10/24 chenxx: add erase() and adjust remove()
+//2017/11/15 chenxx: add resize() function
+
 #ifndef FIXED_VECTOR_H
 #define FIXED_VECTOR_H
 #include <stdint.h>
@@ -104,8 +108,24 @@ class fixed_vector
 		{
 			return static_array_[pos];
 		}
-		
+/**
+	* @brief  Returns the number of elements in the vector.
+	*		  This is the number of actual objects held in the vector, 
+	*		  which is not necessarily equal to its storage capacity.
+	* @param  None
+	* @retval The number of elements in the container.
+	*/	
 		uint16_t size() { return size_; }
+
+/**
+	* @brief  Resizes the container so that it contains n elements.
+	* @param  n: New container size, expressed in number of elements.
+	* @retval None
+	*/
+		void resize(uint16_t n) 
+		{
+   			size_ = n < N ? n : N;
+ 		}
 
         T* begin()
         {
