@@ -12,6 +12,7 @@ void remove_test(uint16_t test_time);
 void erase_test(uint16_t test_time);
 void push_remove_test();
 void resize_test(uint16_t test_time);
+void front_test(uint16_t test_time);
 
 void print_vector(fixed_vector<VECT_TYPE, VECT_LEN>& v)
 {
@@ -50,7 +51,8 @@ int main()
     remove_test(20);
     erase_test(50);
     resize_test(100);
-    
+    front_test(50);
+
     cin.get();
 	return 0;
 }
@@ -111,14 +113,14 @@ void remove_test(uint16_t test_time)
         {
             /*cout << "test" << j << "vok!" << endl;*/
         }
-#if     0 
+#if     0
         cout << "remove num = " << remove_num << endl;
         print_array(originArray, test_buf_len);
         print_vector(v);
         print_vector(stdv);
 #endif
-        
-        
+
+
     }
     if (test_ok)
     {
@@ -205,7 +207,7 @@ void push_remove_test()
     cout << "remove(7)" << endl;
     print_vector(v);
 
-    
+
 }
 
 void resize_test(uint16_t test_time)
@@ -251,6 +253,59 @@ void resize_test(uint16_t test_time)
                     cout << "test faild, data mismatch" << endl;
                     break;
                 }
+            }
+
+        } while (0);
+
+        if (!test_ok)
+        {
+            cout << "test failed" << endl;
+            print_array(originArray, test_buf_len);
+            print_vector(v);
+            print_vector(stdv);
+        }
+        else
+        {
+            /*cout << "test" << j << "vok!" << endl;*/
+        }
+
+    }
+    if (test_ok)
+    {
+        cout << "test for " << test_time << "times passed!" << endl;
+    }
+
+}
+
+
+void front_test(uint16_t test_time)
+{
+    const uint8_t test_buf_len = 30;
+    VECT_TYPE originArray[test_buf_len];
+    vector<VECT_TYPE> stdv;
+    fixed_vector<VECT_TYPE, VECT_LEN> v;
+
+    cout << endl << "********* fronts_test *********" << endl;
+    bool test_ok = true;
+
+    for (int t = 0; t < test_time; t++)
+    {
+        stdv.clear();
+        v.clear();
+        for (int i = 0; i < test_buf_len; i++)
+        {
+            originArray[i] = rand() % 10;
+            stdv.push_back(originArray[i]);
+            v.push_back(originArray[i]);
+        }
+
+        do
+        {
+            if (v.front() != stdv.front())
+            {
+                test_ok = false;
+                cout << "test faild, front mismatch. fixedv:" << v.front() << " stdv:" << stdv.front() << endl;
+                break;
             }
 
         } while (0);

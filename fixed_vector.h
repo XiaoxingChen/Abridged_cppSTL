@@ -9,6 +9,7 @@
 //release information:
 //2017/10/24 chenxx: add erase() and adjust remove()
 //2017/11/15 chenxx: add resize() function
+//2018/01/09 chenxx: add front() and back()
 
 #ifndef FIXED_VECTOR_H
 #define FIXED_VECTOR_H
@@ -19,7 +20,7 @@ template <typename T, uint16_t N>
 class fixed_vector
 {
 	public:
-		
+
 /**
 	* @brief  	Constructor
 	* @array:	static array for queue
@@ -29,23 +30,23 @@ class fixed_vector
 		fixed_vector()
 			:size_(0)
 		{
-			
+
 		}
 
 /**
 	* @brief  push an element to the back of the vector
 	* @param  obj
 	* @retval Success or Not
-	*/		
+	*/
 		bool push_back(const T& obj)
 		{
 			if(size_ == N)
 				return false;
-			
+
 			static_array_[size_++] = obj;
 			return true;
 		}
-		
+
 /**
 	* @brief  find the object and remove from the vector
 	* @param  value
@@ -69,7 +70,7 @@ class fixed_vector
             }
             return true;
 		}
-		
+
 		void clear()	{ size_ = 0; }
 
 /**
@@ -86,9 +87,9 @@ class fixed_vector
 			}
 			return NULL;
 		}
-		
+
 /**
-	* @brief  Returns a reference to the element at specified location pos. 
+	* @brief  Returns a reference to the element at specified location pos.
 	* 				No bounds checking is performed.
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
@@ -97,9 +98,9 @@ class fixed_vector
 		{
 			return static_array_[pos];
 		}
-		
+
 /**
-	* @brief  Returns a reference to the element at specified location pos. 
+	* @brief  Returns a reference to the element at specified location pos.
 	* 				No bounds checking is performed.
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
@@ -110,11 +111,11 @@ class fixed_vector
 		}
 /**
 	* @brief  Returns the number of elements in the vector.
-	*		  This is the number of actual objects held in the vector, 
+	*		  This is the number of actual objects held in the vector,
 	*		  which is not necessarily equal to its storage capacity.
 	* @param  None
 	* @retval The number of elements in the container.
-	*/	
+	*/
 		uint16_t size() { return size_; }
 
 /**
@@ -122,7 +123,7 @@ class fixed_vector
 	* @param  n: New container size, expressed in number of elements.
 	* @retval None
 	*/
-		void resize(uint16_t n) 
+		void resize(uint16_t n)
 		{
    			size_ = n < N ? n : N;
  		}
@@ -135,6 +136,26 @@ class fixed_vector
         T* end()
         {
             return &static_array_[size_];
+        }
+
+        const T& back() const
+		{
+			return static_array_[size_ - 1];
+		}
+
+		T& back()
+		{
+			return static_array_[size_ - 1];
+		}
+
+        const T& front() const
+        {
+            return static_array_[0];
+        }
+
+        T& front()
+        {
+            return static_array_[0];
         }
 
         T* erase(T* p)
@@ -152,7 +173,7 @@ class fixed_vector
 	* 				with bounds checking.
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
-	*/	
+	*/
 	T& at(size_t pos)
 	{
 		if(!(pos < N))
@@ -161,17 +182,17 @@ class fixed_vector
 			throw static_array_[0];
 #else
 			while(1);
-#endif		
+#endif
 		}
 		return static_array_[pos];
 	}
-	
+
 /**
 	* @brief  Returns a reference to the element at specified location pos,
 	* 				with bounds checking.
 	* @param 	pos: position of the element to return
 	* @retval Reference to the requested element.
-	*/		
+	*/
 	const T& at(size_t pos) const
 	{
 		if(!(pos < N))
@@ -180,11 +201,11 @@ class fixed_vector
 			throw static_array_[0];
 #else
 			while(1);
-#endif		
+#endif
 		}
 		return static_array_[pos];
 	}
-	
+
 	private:
 		T static_array_[N == 0 ? 1 : N];
 		uint16_t size_;
