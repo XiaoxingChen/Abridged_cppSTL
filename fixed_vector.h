@@ -19,6 +19,9 @@
 template <typename T, uint16_t N>
 class fixed_vector
 {
+    typedef T* iterator;
+    typedef const T* const_iterator;
+
 	public:
 
 /**
@@ -78,14 +81,14 @@ class fixed_vector
 	* @param  value
 	* @retval pointer
 	*/
-		T* find(const T& obj)
+		iterator find(const T& obj)
 		{
 			for(int i = 0; i < size_; i++)
 			{
 				if(obj == static_array_[i])
 					return &static_array_[i];
 			}
-			return NULL;
+			return end();
 		}
 
 /**
@@ -117,7 +120,7 @@ class fixed_vector
 	* @retval The number of elements in the container.
 	*/
 		uint16_t size() { return size_; }
-		
+
 		uint16_t capacity() { return N; }
 
 /**
@@ -130,16 +133,41 @@ class fixed_vector
    			size_ = n < N ? n : N;
  		}
 
-        T* begin()
+/**
+* @brief  Returns an iterator pointing to the first element in the vector.
+* @param  None
+* @retval An iterator to the beginning of the sequence container.
+*/
+        iterator begin()
         {
             return static_array_;
         }
 
-        T* end()
+        const_iterator begin() const
+        {
+            return static_array_;
+        }
+
+/**
+* @brief  Returns an iterator referring to the past-the-end element in the vector container.
+* @param  None
+* @retval An iterator to the element past the end of the sequence.
+*/
+        iterator end()
         {
             return &static_array_[size_];
         }
 
+        const_iterator end() const
+        {
+            return &static_array_[size_];
+        }
+
+/**
+* @brief  Returns a reference to the last element in the vector.
+* @param  None
+* @retval A reference to the last element in the vector.
+*/
         const T& back() const
 		{
 			return static_array_[size_ - 1];
@@ -150,6 +178,11 @@ class fixed_vector
 			return static_array_[size_ - 1];
 		}
 
+/**
+* @brief  Returns a reference to the first element in the vector.
+* @param  None
+* @retval A reference to the first element in the vector container.
+*/
         const T& front() const
         {
             return static_array_[0];
@@ -160,7 +193,12 @@ class fixed_vector
             return static_array_[0];
         }
 
-        T* erase(T* p)
+/**
+    * @brief  Removes from the vector either a single element (position).
+    * @param  position: Iterator pointing to a single element to be removed from the vector.
+    * @retval An iterator pointing to the new location of the element that followed the last element erased by the function call.
+    */
+        iterator erase(iterator p)
         {
             if (p < begin() || p >= end())
                 return NULL;
