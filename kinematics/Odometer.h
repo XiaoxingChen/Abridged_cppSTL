@@ -1,7 +1,18 @@
+/**
+******************************************************************************
+* @file    Odometer.h
+* @author  Chenxx
+* @version V1.0
+* @date    2018-1-25
+* @brief   This file defines the chassis kinematics odometer.
+******************************************************************************/
+//release information:
+
 #ifndef _ODOMETER_H_
 #define _ODOMETER_H_
 
 #include "Chassis_base.h"
+#include "Singleton.h"
 
 struct PlanarVel {
     float vx;
@@ -23,40 +34,20 @@ public:
 
     COdometer() {}
 
-    void forwardKinematicsTrans(const AxisVector& motorAxisRad, PlanarPos& planarPos);
-    void forwardKinematicsTrans(const AxisVector& motorAxisRad, const float steer_angle, PlanarPos& planarPos);
-
-    void inverseKinematicsTrans(const PlanarVel& planarVel, AxisVector& motorAxisVel);
-    void inverseKinematicsTrans(const PlanarVel& planarVel, const float steer_angle, AxisVector& motorAxisVel);
-
-    void updateGlobalCoord(const PlanarPos& deltaPos);
+    void updateGlobalPos(const AxisVector& motorAxisDeltaRad, float steerAngle);
+    void decomposeVelocity(const PlanarVel& planarVel, AxisVector& motorAxisVel, float steerAngle);
 
 private:
-
-    //Kinematics - Diff
-    void forwardKinematicsTransDiff(const AxisVector& lineDisp, PlanarPos& planarPos);
-    void inverseKinematicsTransDiff(const PlanarVel& planarVel, AxisVector& lineVel);
-
-    //Tricycle
-    void forwardKinematicsTransTricycle(const AxisVector& lineDisp, PlanarPos& planarPos);
-    void inverseKinematicsTransTricycle(const PlanarVel& planarVel, AxisVector& lineVel);
-
-    void forwardKinematicsTransMecanum(const AxisVector& lineDisp, PlanarPos& planarPos);
-    void inverseKinematicsTransMecanum(const PlanarVel& planarVel, AxisVector& lineVel);
-
-    void forwardKinematicsTransCarLikeSteerWheelOdo(const AxisVector& lineDisp, const float steer_angle, PlanarPos& planarPos);
-    void forwardKinematicsTransCarLikeFixedWheelOdo(const AxisVector& lineDisp, const float steer_angle, PlanarPos& planarPos);
-
-    void inverseKinematicsTransCarLikeSteerWheelDrive(const PlanarVel& planarVel, const float steer_angle, AxisVector& lineVel);
-    void inverseKinematicsTransCarLikeFixedWheelDrive(const PlanarVel& planarVel, const float steer_angle, AxisVector& lineVel);
-
     void motorAxisRadToWheelLineDisplace(const AxisVector& axisRad, AxisVector& lineDisp);
-    void wheelLineSpeedToMotorAxisSpeed(const AxisVector& lineSpeed, AxisVector& axisSpeed);
-    
-    CChassis_base* _pChassis;
-    PlanarPos _globalOdometer;
-    bool _isStopped;
+    void wheelLineVelToMotorAxisVel(const AxisVector& lineSpeed, AxisVector& axisSpeed);
+
+    static CChassis_base* _pChassis;
+    static PlanarPos _globalOdom;
+    static float _globalSteerAngle;
+    static bool _isStopped;
 };
+
+typedef NormalSingleton<COdometer> Odometer;
 
 #endif
 //end of file
