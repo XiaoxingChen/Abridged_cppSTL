@@ -1,6 +1,5 @@
-#include "Chassis_base.h"
+#include "Odometer.h"
 #include "Console.h"
-#include <math.h>
 #include "ChassisKinematics.h"
 
 void COdometer::motorAxisRadToWheelLineDisplace(const AxisVector& axisRad, AxisVector& lineDisp)
@@ -19,7 +18,7 @@ void COdometer::wheelLineVelToMotorAxisVel(const AxisVector& lineSpeed, AxisVect
     }
 }
 
-void COdometer::updateGlobalPos(const AxisVector& motorAxisDeltaRad, float steerAngle = NAN)
+void COdometer::updateGlobalPos(const AxisVector& motorAxisDeltaRad, float steerAngle)
 {
     auto chassisType = _pChassis->type();
     
@@ -36,31 +35,31 @@ void COdometer::updateGlobalPos(const AxisVector& motorAxisDeltaRad, float steer
     AxisVector wheelLineDisp;
     motorAxisRadToWheelLineDisplace(motorAxisDeltaRad, wheelLineDisp);
 
-    PlanarPos deltaPos;
+    PlanarVector deltaPos;
     
     if (CChassis_base::DOUBLE_DIFF == chassisType)
     {
-        forwardKinematicsTransDiff(wheelLineDisp, deltaPos);
+        forwardKinematicsTransDiff(wheelLineDisp, deltaPos, _pChassis->wheelbase());
     }
     else if (CChassis_base::TRICYCLE == chassisType)
     {
-        forwardKinematicsTransTricycle(wheelLineDisp, deltaPos);
+        forwardKinematicsTransTricycle(wheelLineDisp, deltaPos, _pChassis->wheelbase());
     }
     else if (CChassis_base::QUAD_MACNUM == chassisType)
     {
-        forwardKinematicsTransMecanum(wheelLineDisp, deltaPos);
+        forwardKinematicsTransMecanum(wheelLineDisp, deltaPos, _pChassis->wheelbase());
     }
     else if (CChassis_base::QUAD_DIFF == chassisType)
     {
-        forwardKinematicsTransDiff(wheelLineDisp, deltaPos);
+        forwardKinematicsTransDiff(wheelLineDisp, deltaPos, _pChassis->wheelbase());
     }
     else if (CChassis_base::CAR_LIKE_WHEEL_STEER_DRIVE_STEER_ODO == chassisType)
     {
-        forwardKinematicsTransCarLikeSteerWheelOdo(wheelLineDisp, steerAngle,deltaPos);
+        forwardKinematicsTransCarLikeSteerWheelOdo(wheelLineDisp, steerAngle,deltaPos, _pChassis->wheelbase());
     }
     else if (CChassis_base::CAR_LIKE_WHEEL_FIXED_DRIVE_FIXED_ODO == chassisType)
     {
-        forwardKinematicsTransCarLikeFixedWheelOdo(wheelLineDisp, steerAngle, deltaPos);
+        forwardKinematicsTransCarLikeFixedWheelOdo(wheelLineDisp, steerAngle, deltaPos, _pChassis->wheelbase());
     }
     else
     {
@@ -96,7 +95,7 @@ void COdometer::updateGlobalPos(const AxisVector& motorAxisDeltaRad, float steer
     return ;
 }
 
-void COdometer::decomposeVelocity(const PlanarVel& planarVel, AxisVector& motorAxisVel, float steerAngle=NAN)
+void COdometer::decomposeVelocity(const PlanarVector& planarVel, AxisVector& motorAxisVel, float steerAngle)
 {
     auto chassisType = _pChassis->type();
 
@@ -114,27 +113,27 @@ void COdometer::decomposeVelocity(const PlanarVel& planarVel, AxisVector& motorA
 
     if (CChassis_base::DOUBLE_DIFF == chassisType)
     {
-        inverseKinematicsTransDiff(planarVel, wheelLineVel);
+        inverseKinematicsTransDiff(planarVel, wheelLineVel, _pChassis->wheelbase());
     }
     else if (CChassis_base::TRICYCLE == chassisType)
     {
-        inverseKinematicsTransTricycle(planarVel, wheelLineVel);
+        inverseKinematicsTransTricycle(planarVel, wheelLineVel, _pChassis->wheelbase());
     }
     else if (CChassis_base::QUAD_MACNUM == chassisType)
     {
-        inverseKinematicsTransMecanum(planarVel, wheelLineVel);
+        inverseKinematicsTransMecanum(planarVel, wheelLineVel, _pChassis->wheelbase());
     }
     else if (CChassis_base::QUAD_DIFF == chassisType)
     {
-        inverseKinematicsTransDiff(planarVel, wheelLineVel);
+        inverseKinematicsTransDiff(planarVel, wheelLineVel, _pChassis->wheelbase());
     }
     else if (CChassis_base::CAR_LIKE_WHEEL_STEER_DRIVE_STEER_ODO == chassisType)
     {
-        inverseKinematicsTransCarLikeSteerWheelDrive(planarVel, steerAngle, wheelLineVel);
+        inverseKinematicsTransCarLikeSteerWheelDrive(planarVel, steerAngle, wheelLineVel, _pChassis->wheelbase());
     }
     else if (CChassis_base::CAR_LIKE_WHEEL_FIXED_DRIVE_FIXED_ODO == chassisType)
     {
-        inverseKinematicsTransCarLikeFixedWheelDrive(planarVel, steerAngle, wheelLineVel);
+        inverseKinematicsTransCarLikeFixedWheelDrive(planarVel, steerAngle, wheelLineVel, _pChassis->wheelbase());
     }
     else
     {
@@ -142,7 +141,18 @@ void COdometer::decomposeVelocity(const PlanarVel& planarVel, AxisVector& motorA
     }
 
     wheelLineVelToMotorAxisVel(wheelLineVel, motorAxisVel);
+    motorAxisVelocitySaturLimit(motorAxisVel, _pChassis->driveWheelNum(), _pChassis->motorAxisMaxSpeed());
 }
 
+void COdometer::setChassis(CChassis_base* pChassis)
+{
+    if (NULL == pChassis)
+        return;
+    else
+    {
+        _pChassis = pChassis;
+    }
+}
 
 //end of file
+

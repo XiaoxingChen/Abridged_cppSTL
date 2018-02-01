@@ -13,38 +13,38 @@
 
 #include "Chassis_base.h"
 #include "Singleton.h"
-
-struct PlanarVel {
-    float vx;
-    float vy;
-    float w;
-};
-
-struct PlanarPos {
-    float x;
-    float y;
-    float theta;
-};
-
-typedef float AxisVector[CChassis_base::MAX_WHEEL_NUM];
+#include <math.h>
 
 class COdometer
 {
 public:
 
-    COdometer() {}
+    COdometer() 
+    {
+        _globalOdom.reset();
+        _prevVelCmd.reset();
+    }
 
-    void updateGlobalPos(const AxisVector& motorAxisDeltaRad, float steerAngle);
-    void decomposeVelocity(const PlanarVel& planarVel, AxisVector& motorAxisVel, float steerAngle);
+    void updateGlobalPos(const AxisVector& motorAxisDeltaRad, float steerAngle = NAN);
+    void decomposeVelocity(const PlanarVector& planarVel, AxisVector& motorAxisVel, float steerAngle = NAN);
+    void setChassis(CChassis_base* pChassis);
+    const PlanarVector& globalPos() const { return _globalOdom; }
 
 private:
+
     void motorAxisRadToWheelLineDisplace(const AxisVector& axisRad, AxisVector& lineDisp);
     void wheelLineVelToMotorAxisVel(const AxisVector& lineSpeed, AxisVector& axisSpeed);
 
-    static CChassis_base* _pChassis;
-    static PlanarPos _globalOdom;
-    static float _globalSteerAngle;
-    static bool _isStopped;
+    CChassis_base* _pChassis;
+    
+    //chassis status
+    PlanarVector _globalOdom;
+    float _globalSteerAngle;
+    bool _isStopped;
+
+    PlanarVector _prevVelCmd;
+    uint32_t _prevVelTimestamp;
+
 };
 
 typedef NormalSingleton<COdometer> Odometer;
